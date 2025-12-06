@@ -6,6 +6,42 @@ spark.sql("USE SCHEMA default")
 
 # COMMAND ----------
 
+# -----------------------------------------
+# CONFIGURATION & DATA QUALITY CHECKS
+# -----------------------------------------
+
+# Centralized configuration for easier maintenance
+CATALOG = "workspace"
+SCHEMA = "default"
+VOLUME = "/Volumes/workspace/default/cscie103_final_project"
+
+print(f"Using catalog: {CATALOG}, schema: {SCHEMA}")
+print(f"Project volume: {VOLUME}")
+
+# Basic sanity check on Bronze input tables
+required_tables = ["bronze_weather_hist", "bronze_weather_forecast", "bronze_weather_mapping"]
+
+for tbl in required_tables:
+    try:
+        df = spark.read.table(tbl)
+        print(f"✓ Table '{tbl}' loaded successfully with {df.count()} rows and {len(df.columns)} columns.")
+    except Exception as e:
+        raise Exception(f"ERROR: Table '{tbl}' could not be read. "
+                        f"Please confirm Bronze ingestion completed. Details: {e}")
+
+# Check for required columns in weather data
+bronze_hist = spark.read.table("bronze_weather_hist")
+expected_cols = {"latitude", "longitude", "datetime"}
+
+missing = expected_cols - set(bronze_hist.columns)
+if missing:
+    raise Exception(f"ERROR: Missing expected columns in bronze_weather_hist: {missing}")
+else:
+    print("✓ bronze_weather_hist contains all required columns:", expected_cols)
+
+
+# COMMAND ----------
+
 """
 SILVER LAYER (STREAMING VERSION)
 - Reads from Bronze Delta tables as a streaming source
