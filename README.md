@@ -251,15 +251,19 @@ Expected content for this section:
 
 ## 📁 Repository Structure
 
+```text
 final-project/
 │
-├── 00_data_lineage_diagram/ ← Lineage diagram (Kenichi)
-├── 00_helper_utilities/ ← Helper DE utilities (Kenichi)
-├── 01_ingest_bronze/ ← Bronze ingestion (Luke)
-├── 02_processing_silver/ ← Silver (batch) (Luke)
-├── 02A_processing_silver_streaming/ ← Silver (streaming) (Kenichi)
-├── 03_reporting_gold/ ← Gold aggregation + optimization
+├── 00_data_lineage_diagram/          ← Lineage diagram notebook (Kenichi)
+├── 00_helper_utilities/              ← Helper DE utilities (Kenichi)
+│
+├── 01_ingest_bronze/                 ← Bronze ingestion (Luke)
+├── 02_processing_silver/             ← Silver batch (Luke)
+├── 02A_processing_silver_streaming/  ← Silver streaming (Kenichi)
+│
+├── 03_reporting_gold/                ← Gold aggregation + optimization
 └── README.md
+```
 
 
 ---
