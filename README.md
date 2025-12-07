@@ -107,20 +107,28 @@ This diagram shows how raw data flows from ingestion to BI outputs.
                    │   BI Dashboards + ML Workloads    │
                    │  (Consuming curated Gold tables)  │
                    └──────────────────────────────────┘
+```
+
 ---
 
-# 🛠️ Data Engineering
+# 🧑‍💼 Team Contributions
 
-## **Data Engineer 1 – Luke**
+This section describes the contributions of each role in our group, aligned to the project requirements of CSCI E-103.
 
-Luke built the foundation of the Lakehouse pipeline, enabling the rest of the team to work from a consistent and well-structured environment.
+---
 
-### ✔ GitHub Repository & Project Framework  
-- Created the GitHub repository for team collaboration  
-- Set up the initial folder and notebook structure  
+## 🛠️ Data Engineering
 
-### ✔ Bronze Layer Ingestion  
-Developed the full ingestion layer, converting raw CSVs into managed Delta tables:
+### **Data Engineer 1 – Luke**
+
+Luke developed the foundational components of our Lakehouse pipeline:
+
+#### ✔ Repository & Project Framework
+- Created the GitHub repository and initial notebook structure  
+- Established folder organization used throughout the project  
+
+#### ✔ Bronze Layer Ingestion
+Converted raw Kaggle CSVs into Delta tables, including:
 
 - `bronze_client`  
 - `bronze_train`  
@@ -130,54 +138,52 @@ Developed the full ingestion layer, converting raw CSVs into managed Delta table
 - `bronze_weather_forecast`  
 - `bronze_weather_mapping`  
 
-### ✔ Batch Silver Layer  
-- Joined historic and forecast weather data with station-to-county mapping  
-- Produced the initial Silver tables for modeling and BI use:  
-  - `silver_weather_hist`  
-  - `silver_weather_forecast`  
+#### ✔ Batch Silver Layer  
+- Joined weather data with county mapping  
+- Produced initial Silver weather tables used by downstream consumers  
 
-### ✔ Gold Aggregation Layer (Batch)  
-Implemented the first version of the Gold layer aggregations:
+#### ✔ Gold Aggregation Layer (Batch)
+Implemented the first Gold-level business table:
 
-- Created `gold_daily_energy_report`  
-- Performed daily aggregations on energy usage  
-- Joined pricing and weather data  
-- Implemented Delta **MERGE** for incremental upserts  
+- Built `gold_daily_energy_report`  
+- Performed daily aggregations  
+- Added Delta **MERGE** logic for incremental updates  
 
-**Luke’s work established the core ingestion and transformation pipeline that the rest of the team built upon.**
+**Luke’s work created the initial medallion pipeline upon which the rest of the system was built.**
 
 ---
 
-## **Data Engineer 2 – Kenichi**
+### **Data Engineer 2 – Kenichi**
 
-Kenichi completed the remaining Data Engineering requirements and significantly enhanced pipeline reliability, performance, and documentation.
+Kenichi completed the remaining Data Engineering requirements and significantly enhanced reliability and performance.
 
-### 🔹 **1. Implemented Silver Structured Streaming Pipeline (trigger=once)**  
-Converted the Silver weather processing into a **streaming** architecture:
-
+#### 🔹 1. Implemented Silver Structured Streaming Layer (`trigger=once`)
+- Converted the Silver weather processing pipeline into a **Structured Streaming** job  
 - Streaming inputs:  
   - `bronze_weather_hist`  
   - `bronze_weather_forecast`
-- Joined with static mapping:  
-  - `bronze_weather_mapping`
-- Output tables:  
+- Joined with dimension table:  
+  - `bronze_weather_mapping` (adds county)
+- Outputs:
   - `silver_weather_hist_stream`  
   - `silver_weather_forecast_stream`
-- Added checkpointing in UC Volume  
-- Implemented **`trigger(once=True)`** to meet the DE rubric’s incremental processing requirement  
+- Implemented checkpointing in UC Volume  
+- Fully satisfies the DE rubric requirement for *incremental processing via streaming*  
 
-### 🔹 **2. Added Configuration + Data Quality Checks**  
-Strengthened pipeline robustness by verifying:
+#### 🔹 2. Added Configuration + Data Quality Checks  
+Strengthened pipeline quality by adding:
 
-- Bronze table existence  
-- Expected columns (latitude, longitude, datetime)  
-- Centralized configuration for catalog, schema, and storage paths  
-- Improved readability and reduced risk of silent failures  
+- Centralized catalog/schema/volume configuration  
+- Table existence checks before streaming  
+- Required column validation (lat/long/datetime)  
+- Clear error surfacing to prevent silent failures  
 
-### 🔹 **3. Gold Layer Performance Optimization**  
-Added BI-focused performance tuning:
+#### 🔹 3. Optimized Gold Layer Performance  
+Added BI-focused optimization:
 
 ```sql
 OPTIMIZE gold_daily_energy_report
 ZORDER BY (county, date);
+
+
 
