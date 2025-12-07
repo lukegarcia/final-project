@@ -108,7 +108,7 @@ This diagram shows how raw data flows from ingestion to BI outputs.
                    │  (Consuming curated Gold tables)  │
                    └──────────────────────────────────┘
 
-
+---
 🛠️ Data Engineering
 Data Engineer 1 – Luke
 
