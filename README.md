@@ -245,7 +245,92 @@ Expected content for this section:
 - Partitioning & indexing strategy  
 - CI/CD & deployment considerations  
 - Disaster recovery planning  
-- Extended enterprise architecture diagrams  
+- Extended enterprise architecture diagrams
+-                              ┌───────────────────────────────┐
+                             │        DIM: client            │
+                             │  (bronze_client / silver)     │
+                             │-------------------------------│
+                             │ PK: client_id (logical)       │
+                             │ attrs: segment, region, ...   │
+                             └───────────────┬───────────────┘
+                                             │ (optional join by client_id)
+                                             │
+                                             v
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                   FACT: energy_targets (train)                               │
+│                (bronze_train / silver_train)                                 │
+│------------------------------------------------------------------------------│
+│ Grain: 1 row per (datetime, county, is_consumption, is_business, product_type│
+│        [and other categorical flags])                                         │
+│------------------------------------------------------------------------------│
+│ PK (logical): (datetime, county, is_consumption, is_business, product_type)  │
+│ Measures: target (kWh), etc.                                                 │
+│ Time keys: datetime (timestamp), date (derived)                               │
+└───────────────────────────────┬──────────────────────────────────────────────┘
+                                │ (temporal alignment by date/datetime)
+                                │
+                                v
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                 FACT: electricity_prices (time-series)                        │
+│                 (bronze_electricity_prices / silver optional)                 │
+│------------------------------------------------------------------------------│
+│ Grain: 1 row per datetime (or date)                                           │
+│ Key (logical): datetime/date                                                  │
+│ Measures: price                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                   FACT: gas_prices (time-series)                              │
+│                   (bronze_gas_prices / silver optional)                       │
+│------------------------------------------------------------------------------│
+│ Grain: 1 row per datetime (or date)                                           │
+│ Key (logical): datetime/date                                                  │
+│ Measures: price                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+
+                             ┌──────────────────────────────────┐
+                             │  DIM: weather_station_map         │
+                             │ (bronze_weather_station_map)      │
+                             │----------------------------------│
+                             │ Key (logical): (latitude,longitude)│
+                             │ attrs: county_name (and/or county) │
+                             └───────────────┬──────────────────┘
+                                             │ (geo enrichment join)
+                                             │ lat/lon join in Silver
+                                             v
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                  FACT: weather_hist (observed)                                │
+│      (bronze_historical_weather → silver_weather_hist)                        │
+│------------------------------------------------------------------------------│
+│ Grain: 1 row per (latitude, longitude, datetime)                              │
+│ PK (logical): (latitude, longitude, datetime)                                 │
+│ Measures: temperature, dewpoint, rain, snowfall, windspeed, cloudcover, ...   │
+│ Enriched attrs (Silver): county_name (from station_map)                       │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                  FACT: weather_forecast (predicted)                           │
+│      (bronze_forecast_weather → silver_weather_forecast)                      │
+│------------------------------------------------------------------------------│
+│ Grain: 1 row per (latitude, longitude, forecast_datetime, hours_ahead)        │
+│ PK (logical): (latitude, longitude, forecast_datetime, hours_ahead)           │
+│ Measures: temperature, dewpoint, precipitation, radiation, wind components... │
+│ Enriched attrs (Silver): county_name (from station_map)                       │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+
+                                  ┌──────────────────────────────────────────┐
+                                  │               GOLD LAYER                 │
+                                  │------------------------------------------│
+                                  │ gold_daily_energy_report (or equivalents)│
+                                  │ Grain: 1 row per (county/date)           │
+                                  │ Inputs: silver_train + silver_weather_*  │
+                                  │         + prices (optional)              │
+                                  └──────────────────────────────────────────┘
+
 
 ---
 
