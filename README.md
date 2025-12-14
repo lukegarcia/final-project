@@ -350,6 +350,123 @@ final-project/
 └── README.md
 ```
 
+🏛️ Data Architecture
+
+(Completed by Abby & Chijioke)
+
+This section documents the architectural design decisions that support scalability, governance, and analytics readiness across the Lakehouse.
+
+🔹 1. Logical Data Model & ERD Design
+
+The Lakehouse is centered around time-series fact tables enriched by geographic and client dimensions.
+
+Fact tables
+
+Energy consumption & production (train)
+
+Historical and forecast weather (hourly granularity)
+
+Electricity and gas pricing
+
+Dimension tables
+
+Client metadata
+
+Weather station → county mapping
+
+Relationships are applied logically in the Silver layer through joins rather than enforced foreign-key constraints, aligning with Delta Lake and Lakehouse best practices.
+
+🔹 2. Table Cardinality & Data Scale Validation
+
+Architectural decisions were validated against real data volumes:
+
+High-cardinality tables
+
+bronze_train / silver_train: ~2M+ records
+
+bronze_historical_weather / silver_weather_hist: ~1.7M+ records
+
+Medium-cardinality tables
+
+Electricity and gas prices (time-series)
+
+Low-cardinality tables
+
+Client and county mapping dimensions
+
+This informed partitioning, deduplication, and aggregation strategies used downstream.
+
+🔹 3. Partitioning & Optimization Strategy
+
+Bronze Layer
+
+Minimal transformation
+
+No aggressive partitioning to preserve raw data fidelity
+
+Silver Layer
+
+Date-derived columns added for time-based processing
+
+Deduplication enforced on natural keys (location + timestamp)
+
+Streaming Silver tables leverage checkpointing for incremental ingestion
+
+Gold Layer
+
+Business-level aggregates optimized for BI
+
+OPTIMIZE and ZORDER BY (county, date) applied for query performance
+
+🔹 4. Deployment & Pipeline Reusability
+
+The architecture supports re-runnable and production-aligned workflows:
+
+Fully qualified catalog and schema references
+
+Idempotent table creation using managed Delta tables
+
+Layered notebook structure (Bronze → Silver → Gold)
+
+Clear separation of batch and streaming responsibilities
+
+This design is compatible with future Databricks Jobs or CI/CD automation.
+
+🔹 5. Data Reliability & Recovery
+
+Delta Lake provides ACID guarantees, schema enforcement, and versioning
+
+Bronze tables serve as immutable recovery sources
+
+Silver and Gold layers are fully reproducible from Bronze
+
+Streaming checkpoints ensure exactly-once processing semantics
+
+🔹 6. Enterprise Architecture Alignment
+
+The Lakehouse supports:
+
+Batch ingestion of raw source data
+
+Incremental processing via Structured Streaming
+
+Curated Gold tables for BI dashboards and ML workloads
+
+Governed schemas for lineage, discoverability, and reuse
+
+This positions the platform as a scalable analytics foundation beyond the course use case.
+
+🔹 Data Architect Contributions (Chijioke John Ifedili)
+
+Validated Bronze-layer schema integrity and temporal coverage
+
+Ensured Silver-layer join compatibility and enrichment readiness
+
+Reviewed table scale, partitioning, and optimization strategies
+
+Aligned Lakehouse design with enterprise data architecture principles
+
+This work ensured the system was governed, scalable, and analytics-ready.
 
 ---
 
