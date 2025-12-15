@@ -211,6 +211,33 @@ These utilities speed up debugging, validation, and schema exploration across th
 ## 🤖 Data Science  
 *(To be completed by Selin & Liwei)*
 
+### **Data Scientist 1 – Selin **
+Run 06_DataScience.ipynb
+
+#### 🔹 1. Exploratory Data Analysis (EDA)  
+- Performed exploratory data analysis on the gold dataset (skewness,distribution, missing values, duplicated rows, outliers, correlation matrix, visualisations between different variables.
+- Log transformation of heavily skewed variables
+
+#### 🔹 2. Feature engineering 
+- Two sets of variables for two models (basic and complex).
+- split the date column into day, month and year to make data more meaningful
+- converted the county column to category from integer
+- In addition to basic data, aggregated data from Liwei (county and date) to include more complex variables such as avg_radiation_l, 
+Has_business, n_product_types,total_energy_production.
+ 
+#### 🔹 3. Model training with XGBoost
+- splitting data into training and test
+- training and tetsing with XGBoost
+
+#### 🔹 4. Model Evaluation and experiment tracking
+- Model maintenance with MLflow.
+- Plot Actual vs Prediction values
+- RMSE, R2, MAE, MAPE
+- Residual plot
+- Error distribution 
+- Feature importance values from the model
+
+
 Expected content for this section:
 
 - Exploratory Data Analysis (EDA)  
