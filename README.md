@@ -236,6 +236,8 @@ Has_business, n_product_types,total_energy_production.
 - Error distribution 
 - Feature importance values from the model
 
+---
+
 ### **MlOps - Liwei**
 
 #### 🔹 ML Data pipelinea 
@@ -259,16 +261,6 @@ Has_business, n_product_types,total_energy_production.
   - Load the Model directory
   - Using the model base on its Geo location (county) and output the prediction table and prediction summary stream tables.
    
-
-Expected content for this section:
-
-- Exploratory Data Analysis (EDA)  
-- Feature engineering  
-- Model training (e.g., XGBoost, AutoML)  
-- MLflow experiment tracking (parameters, metrics, artifacts)  
-- Model evaluation methodology  
-- Integration of predictions with Silver/Gold tables  
-
 ---
 
 ## 📊 Business Intelligence  
