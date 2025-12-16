@@ -317,17 +317,49 @@ Expected BI deliverables:
 ---
 
 ## 🏛️ Data Architecture  
-*(To be completed by Abby & Chijioke)*
 
-Expected content for this section:
+### **Data Architect 1 - Abby**
 
-- ERD with PK/FK relationships  
-- Table cardinality & scale explanations  
-- Partitioning & indexing strategy  
-- CI/CD & deployment considerations  
-- Disaster recovery planning  
-- Extended enterprise architecture diagrams
--                              ┌───────────────────────────────┐
+**ERD with PK/FK relationships**
+![alt text](ERD.png)
+
+**DFD**
+![alt text](DFD.png)
+
+**Table cardinality & scale explanations:**
+See the 'data dictionary.csv' file for explanations
+
+**Partitioning & indexing strategy**
+- Progressive optimization: Partitioning and indexing are applied incrementally, with more deliberate optimization introduced at the Silver layer
+- Time-based partitioning: Tables are partitioned by event or forecast date, supporting efficient time-range queries for weather and pricing data
+- Location-based option: Geographic fields (e.g., region or county) can also be used as a partitioning dimension when spatial filtering is common.
+
+**CI/CD & deployment considerations**
+- Terraform is used to deploy pipeline infrastructure, ensuring consistency, repeatability, and auditability across environments
+- Automated deployment: CI/CD pipelines (Databricks Asset Bundles with GitHub Actions) manage deployments of workflows, models, and configurations
+- Batch and streaming support: The same platform supports current-state batch pipelines and future-state streaming pipelines without re-architecture
+- Scalable design: This approach enables the system to scale and adapt as business requirements evolve.
+
+**Disaster recovery planning**
+- Version-controlled infrastructure and pipelines: All code and configurations are stored in version control, enabling consistent environment recreation and rapid recovery
+- Durable, replayable data storage: Delta Lake supports reprocessing historical data and recovering streaming pipelines after failures
+- Regional replication: Critical datasets are replicated across regions (primary: US East 1; backup: US East 2) to ensure availability during outages.
+- Streaming resilience: Real-time jobs use checkpointing to restart from the last known good state, minimizing downtime and data loss
+
+**What if business came back with streaming requirement**
+- Event bus backbone: A central event bus (e.g., Kafka) continuously ingests smart-meter readings, weather updates, and market prices, making data available immediately rather than with hourly or daily latency
+- Stream processing layer: Spark Structured Streaming processes events as they arrive, aligns data by time, joins multiple sources, computes rolling features, and handles late-arriving prosumer data common in distributed energy systems
+- Low-latency model serving: Updated features feed directly into near real-time model serving (Databricks Model Serving or MLflow), enabling continuously refreshed consumption and production forecasts
+- Operational delivery: Forecasts are pushed to grid operations and alerting dashboards to support faster responses to imbalance and risk conditions
+- Historical persistence: All events and predictions are stored in Delta Lake, supporting model retraining, long-term trend analysis, and auditability for continuous improvemeny
+
+### **Data Architect 2 - Chijioke**
+
+
+This section documents the architectural design decisions that support scalability, governance, and analytics readiness across the Lakehouse.
+
+Extended enterprise architecture diagrams
+                             ┌───────────────────────────────┐
                              │        DIM: client            │
                              │  (bronze_client / silver)     │
                              │-------------------------------│
@@ -413,29 +445,6 @@ Expected content for this section:
                                   └──────────────────────────────────────────┘
 
 
----
-
-## 📁 Repository Structure
-
-```text
-final-project/
-│
-├── 00_data_lineage_diagram/          ← Lineage diagram notebook (Kenichi)
-├── 00_helper_utilities/              ← Helper DE utilities (Kenichi)
-│
-├── 01_ingest_bronze/                 ← Bronze ingestion (Luke)
-├── 02_processing_silver/             ← Silver batch (Luke)
-├── 02A_processing_silver_streaming/  ← Silver streaming (Kenichi)
-│
-├── 03_reporting_gold/                ← Gold aggregation + optimization
-└── README.md
-```
-
-🏛️ Data Architecture
-
-(Completed by Abby & Chijioke)
-
-This section documents the architectural design decisions that support scalability, governance, and analytics readiness across the Lakehouse.
 
 🔹 1. Logical Data Model & ERD Design
 
@@ -549,6 +558,22 @@ Aligned Lakehouse design with enterprise data architecture principles
 
 This work ensured the system was governed, scalable, and analytics-ready.
 
+---
+## 📁 Repository Structure
+
+```text
+final-project/
+│
+├── 00_data_lineage_diagram/          ← Lineage diagram notebook (Kenichi)
+├── 00_helper_utilities/              ← Helper DE utilities (Kenichi)
+│
+├── 01_ingest_bronze/                 ← Bronze ingestion (Luke)
+├── 02_processing_silver/             ← Silver batch (Luke)
+├── 02A_processing_silver_streaming/  ← Silver streaming (Kenichi)
+│
+├── 03_reporting_gold/                ← Gold aggregation + optimization
+└── README.md
+```
 ---
 
 ## ▶️ Running the Pipeline
