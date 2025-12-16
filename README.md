@@ -321,10 +321,10 @@ Expected BI deliverables:
 ### **Data Architect 1 - Abby**
 
 **ERD with PK/FK relationships**
-![alt text](ERD.png)
+![alt text](z_ERD.png)
 
 **DFD**
-![alt text](DFD.png)
+![alt text](z_DFD.png)
 
 **Table cardinality & scale explanations:**
 See the 'data dictionary.csv' file for explanations
