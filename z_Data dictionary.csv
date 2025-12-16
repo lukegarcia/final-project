@@ -53,4 +53,5 @@ historical_weather,datetime ,TIMESTAMP,PK,Yes,Very high,"With latitude/longitude
 ,direct_solar_radiation,DOUBLE,,,N/A,
 ,diffuse_radiation ,DOUBLE,,,N/A,
 ,[latitude/longitude] ,DOUBLE,PK,Yes,Many,"With datetime, is how rows are uniquely identified"
+
 ,data_block_id,INT,FK,Yes,High,
