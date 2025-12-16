@@ -240,7 +240,7 @@ Has_business, n_product_types,total_energy_production.
 
 ### **MLOps - Liwei**
 
-#### 🔹 ML Data pipelinea 
+#### 🔹 ML Data pipeline
 * 01A_bronze_enhancer.sql: stream table of data sources of client, weather, pricing, and train data.
 * 02A_silver_enhancer.sql: produce cleansed, enriched data with GIS transformation for ML 
 * 03A_gold_enhancer.sql: construct weather, client attribute, pricing and energy production and consumption data aggregated features.  
