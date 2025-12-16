@@ -1,0 +1,2357 @@
+{
+  "datasets": [
+    {
+      "name": "c56b8f6e",
+      "displayName": "daily_energy_report_secure",
+      "queryLines": [
+        "SELECT * FROM cscie103_catalog_final.gold.daily_energy_report_secure"
+      ]
+    },
+    {
+      "name": "7c59dd28",
+      "displayName": "production_county",
+      "queryLines": [
+        "SELECT\r\n",
+        "  county,\r\n",
+        "  county_name,\r\n",
+        "  SUM(total_energy_production) AS total_energy_production\r\n",
+        "FROM cscie103_catalog_final.gold.daily_energy_report_secure\r\n",
+        "GROUP BY county, county_name\r\n",
+        "ORDER BY total_energy_production DESC;\r\n"
+      ]
+    },
+    {
+      "name": "a7e4fbcc",
+      "displayName": "weather_hist",
+      "queryLines": [
+        "SELECT * FROM cscie103_catalog_final.silver.weather_hist"
+      ]
+    },
+    {
+      "name": "0b5b18b1",
+      "displayName": "weather_forecast_mv",
+      "queryLines": [
+        "SELECT * FROM cscie103_catalog_final.silver.weather_forecast_mv"
+      ]
+    },
+    {
+      "name": "fd3b2ef6",
+      "displayName": "county_weather_4hours_vw",
+      "queryLines": [
+        "SELECT * FROM cscie103_catalog_final.gold.county_weather_4hours_vw"
+      ]
+    },
+    {
+      "name": "1f21bbbc",
+      "displayName": "Difference",
+      "queryLines": [
+        "SELECT\r\n",
+        "    *,\r\n",
+        "    (total_energy - total_energy_production) AS difference\r\n",
+        "FROM cscie103_catalog_final.gold.daily_energy_report_secure;"
+      ]
+    },
+    {
+      "name": "a301f28c",
+      "displayName": "train",
+      "queryLines": [
+        "SELECT\r\n",
+        "  *,\r\n",
+        "  TO_DATE(datetime) AS date,\r\n",
+        "  DATE_FORMAT(datetime, 'HH:mm:ss') AS time\r\n",
+        "FROM cscie103_catalog_final.bronze.train;"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "623a7659",
+      "displayName": "Overview",
+      "layout": [
+        {
+          "widget": {
+            "name": "f08198d7",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"font-size: 24px;font-family: Arial;\">Electricity Production & Consumption Overview for Estonian Solar Customers</span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "a292e8e4",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "weekly(date)",
+                      "expression": "DATE_TRUNC(\"WEEK\", `date`)"
+                    },
+                    {
+                      "name": "sum(total_energy)",
+                      "expression": "SUM(`total_energy`)"
+                    },
+                    {
+                      "name": "avg(avg_temp)",
+                      "expression": "AVG(`avg_temp`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "combo",
+              "encodings": {
+                "x": {
+                  "fieldName": "weekly(date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "primary": {
+                    "fields": [
+                      {
+                        "fieldName": "sum(total_energy)"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    }
+                  },
+                  "secondary": {
+                    "fields": [
+                      {
+                        "fieldName": "avg(avg_temp)"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "showDescription": true,
+                "title": "Total Energy Consumption",
+                "description": "Electricity consumption in different weeks comparing with the average temperature of that week"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 11,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "713169d0",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "avg(avg_temp)",
+                      "expression": "AVG(`avg_temp`)"
+                    },
+                    {
+                      "name": "latitude",
+                      "expression": "`latitude`"
+                    },
+                    {
+                      "name": "longitude",
+                      "expression": "`longitude`"
+                    },
+                    {
+                      "name": "avg(total_energy)",
+                      "expression": "AVG(`total_energy`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "symbol-map",
+              "encodings": {
+                "coordinates": {
+                  "latitude": {
+                    "fieldName": "latitude"
+                  },
+                  "longitude": {
+                    "fieldName": "longitude"
+                  }
+                },
+                "color": {
+                  "fieldName": "avg(avg_temp)",
+                  "scale": {
+                    "type": "quantitative",
+                    "colorRamp": {
+                      "mode": "scheme",
+                      "scheme": "reds"
+                    }
+                  }
+                },
+                "size": {
+                  "fieldName": "avg(total_energy)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "mark": {
+                "size": 1.4
+              },
+              "frame": {
+                "showTitle": true,
+                "showDescription": true,
+                "title": "Average Energy Consumtpion for Estonian Solar Customers by County",
+                "description": "Average enegery consumption by county considering the average temparature of the county"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 5,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "a75412c6",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "sum(total_energy)",
+                      "expression": "SUM(`total_energy`)"
+                    },
+                    {
+                      "name": "county_name",
+                      "expression": "`county_name`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "sum(total_energy)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Total Eletricity Consumption"
+                },
+                "color": {
+                  "fieldName": "county_name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 5,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "3887d5c2",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "1f21bbbc",
+                  "fields": [
+                    {
+                      "name": "latitude",
+                      "expression": "`latitude`"
+                    },
+                    {
+                      "name": "longitude",
+                      "expression": "`longitude`"
+                    },
+                    {
+                      "name": "avg(difference)",
+                      "expression": "AVG(`difference`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "symbol-map",
+              "encodings": {
+                "coordinates": {
+                  "latitude": {
+                    "fieldName": "latitude"
+                  },
+                  "longitude": {
+                    "fieldName": "longitude"
+                  }
+                },
+                "size": {
+                  "fieldName": "avg(difference)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "extra": [
+                  {
+                    "fieldName": "avg(difference)"
+                  }
+                ]
+              },
+              "mark": {
+                "size": 1.4
+              },
+              "frame": {
+                "showTitle": true,
+                "showDescription": true,
+                "title": "Average Energy imbalance by counties",
+                "description": "Average enegery imbalance by county "
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 45,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "44ba0ea9",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "sum(total_energy_production)",
+                      "expression": "SUM(`total_energy_production`)"
+                    },
+                    {
+                      "name": "county_name",
+                      "expression": "`county_name`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "sum(total_energy_production)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Total Eletricity Consumption"
+                },
+                "color": {
+                  "fieldName": "county_name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 19,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "de524d16",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "weekly(date)",
+                      "expression": "DATE_TRUNC(\"WEEK\", `date`)"
+                    },
+                    {
+                      "name": "sum(total_energy_production)",
+                      "expression": "SUM(`total_energy_production`)"
+                    },
+                    {
+                      "name": "avg(avg_radiation)",
+                      "expression": "AVG(`avg_radiation`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "combo",
+              "encodings": {
+                "x": {
+                  "fieldName": "weekly(date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "primary": {
+                    "fields": [
+                      {
+                        "fieldName": "sum(total_energy_production)"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    }
+                  },
+                  "secondary": {
+                    "fields": [
+                      {
+                        "fieldName": "avg(avg_radiation)"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    }
+                  }
+                }
+              },
+              "mark": {
+                "colors": [
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 4
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 6
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 8
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 9
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "showDescription": true,
+                "title": "Total Electricity Production",
+                "description": "Electricity production in different weeks comparing to the average radiation of that week"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 25,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "85368a47",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "avg(total_energy)",
+                      "expression": "AVG(`total_energy`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "avg(total_energy)"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Avg Consumption",
+                "showDescription": false
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 1,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "d0ee5e81",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "avg(total_energy_production)",
+                      "expression": "AVG(`total_energy_production`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "avg(total_energy_production)"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Avg Production"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 1,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "6fa52d53",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "avg(avg_temp)",
+                      "expression": "AVG(`avg_temp`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "avg(avg_temp)"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Average Temperature"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 1,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "af47949b",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "1f21bbbc",
+                  "fields": [
+                    {
+                      "name": "weekly(date)",
+                      "expression": "DATE_TRUNC(\"WEEK\", `date`)"
+                    },
+                    {
+                      "name": "sum(total_energy_production)",
+                      "expression": "SUM(`total_energy_production`)"
+                    },
+                    {
+                      "name": "sum(difference)",
+                      "expression": "SUM(`difference`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "area",
+              "encodings": {
+                "x": {
+                  "fieldName": "weekly(date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "fields": [
+                    {
+                      "fieldName": "sum(total_energy_production)",
+                      "displayName": "Total Production"
+                    },
+                    {
+                      "fieldName": "sum(difference)",
+                      "displayName": "Total Consumption"
+                    }
+                  ]
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "showDescription": true,
+                "title": "Energy Imbalance",
+                "description": "Electricity consumption - production in different time"
+              },
+              "mark": {
+                "colors": [
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 2
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 1
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 33,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "6d37e4be",
+            "multilineTextboxSpec": {
+              "lines": [
+                "## <span style=\"text-align:center;display:block;\"><span style=\"font-size:18px\">Electricity Consumption for Estonian Counties in Different Months</span></span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 6,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "3acb1255",
+            "multilineTextboxSpec": {
+              "lines": [
+                "## <span style=\"text-align:center;display:block\"><span style=\"font-size:18px\">Electricity Production for Estonian Counties in Different Months</span></span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 17,
+            "width": 6,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "b3be7ebd",
+            "multilineTextboxSpec": {
+              "lines": [
+                "## <span style=\"text-align:center;display:block\"><span style=\"font-size:18px\">Energy Imbalance: Production and Consumption Differences</span></span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 31,
+            "width": 6,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "4df0eacf",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "avg(avg_radiation)",
+                      "expression": "AVG(`avg_radiation`)"
+                    },
+                    {
+                      "name": "latitude",
+                      "expression": "`latitude`"
+                    },
+                    {
+                      "name": "longitude",
+                      "expression": "`longitude`"
+                    },
+                    {
+                      "name": "avg(total_energy_production)",
+                      "expression": "AVG(`total_energy_production`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "symbol-map",
+              "encodings": {
+                "coordinates": {
+                  "latitude": {
+                    "fieldName": "latitude"
+                  },
+                  "longitude": {
+                    "fieldName": "longitude"
+                  }
+                },
+                "color": {
+                  "fieldName": "avg(avg_radiation)",
+                  "scale": {
+                    "type": "quantitative",
+                    "colorRamp": {
+                      "mode": "scheme",
+                      "scheme": "greens"
+                    }
+                  }
+                },
+                "size": {
+                  "fieldName": "avg(total_energy_production)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "mark": {
+                "size": 1.4
+              },
+              "frame": {
+                "showTitle": true,
+                "showDescription": true,
+                "title": "Average Energy Production for Estonian Solar Customers by County",
+                "description": "Average enegery production by county considering the average direct solar radiation of the county"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 19,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "7f4971ba",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "1f21bbbc",
+                  "fields": [
+                    {
+                      "name": "sum(difference)",
+                      "expression": "SUM(`difference`)"
+                    },
+                    {
+                      "name": "is_business",
+                      "expression": "`is_business`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "sum(difference)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "is_business",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "What residential type creates the most energy imbalance"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 39,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "6c714cab",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "1f21bbbc",
+                  "fields": [
+                    {
+                      "name": "sum(difference)",
+                      "expression": "SUM(`difference`)"
+                    },
+                    {
+                      "name": "product_type_name",
+                      "expression": "`product_type_name`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "sum(difference)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "product_type_name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "What solar product contributes to the most energy imbalance"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 39,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "83e1c880",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "1f21bbbc",
+                  "fields": [
+                    {
+                      "name": "avg(difference)",
+                      "expression": "AVG(`difference`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "avg(difference)"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Avg. Imbalance Value"
+              }
+            }
+          },
+          "position": {
+            "x": 5,
+            "y": 1,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "56c1b412",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "sum(total_energy)",
+                      "expression": "SUM(`total_energy`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(total_energy)"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Total Consumption",
+                "showDescription": false
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "87ba6bb1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "sum(total_energy_production)",
+                      "expression": "SUM(`total_energy_production`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(total_energy_production)"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Total Production"
+              }
+            }
+          },
+          "position": {
+            "x": 1,
+            "y": 1,
+            "width": 1,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS"
+    },
+    {
+      "name": "cede1704",
+      "displayName": "Global Filters",
+      "layout": [
+        {
+          "widget": {
+            "name": "3f344874",
+            "queries": [
+              {
+                "name": "dashboards/01f0d6ffca6a1682b552d4efbc6d255e/datasets/01f0d7046125164183fb177351bf5cd5_date",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "date",
+                      "expression": "`date`"
+                    },
+                    {
+                      "name": "date_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-date-range-picker",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "date",
+                    "queryName": "dashboards/01f0d6ffca6a1682b552d4efbc6d255e/datasets/01f0d7046125164183fb177351bf5cd5_date"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "ad429ca3",
+            "queries": [
+              {
+                "name": "dashboards/01f0d6ffca6a1682b552d4efbc6d255e/datasets/01f0d7046125164183fb177351bf5cd5_county_name",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "county_name",
+                      "expression": "`county_name`"
+                    },
+                    {
+                      "name": "county_name_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "county_name",
+                    "queryName": "dashboards/01f0d6ffca6a1682b552d4efbc6d255e/datasets/01f0d7046125164183fb177351bf5cd5_county_name"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "529093ed",
+            "queries": [
+              {
+                "name": "dashboards/01f0d6ffca6a1682b552d4efbc6d255e/datasets/01f0d7046125164183fb177351bf5cd5_is_business",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "is_business",
+                      "expression": "`is_business`"
+                    },
+                    {
+                      "name": "is_business_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "is_business",
+                    "queryName": "dashboards/01f0d6ffca6a1682b552d4efbc6d255e/datasets/01f0d7046125164183fb177351bf5cd5_is_business"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "a84487d2",
+            "queries": [
+              {
+                "name": "dashboards/01f0d6ffca6a1682b552d4efbc6d255e/datasets/01f0d7046125164183fb177351bf5cd5_product_type_name",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "product_type_name",
+                      "expression": "`product_type_name`"
+                    },
+                    {
+                      "name": "product_type_name_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "product_type_name",
+                    "queryName": "dashboards/01f0d6ffca6a1682b552d4efbc6d255e/datasets/01f0d7046125164183fb177351bf5cd5_product_type_name"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 1,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS"
+    },
+    {
+      "name": "8e9517bd",
+      "displayName": "Production and Consumption Details",
+      "layout": [
+        {
+          "widget": {
+            "name": "19c96875",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"font-size:24px;font-family:Arial\">Electricity Production & Consumption By Key Determinant</span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "6bf3ce34",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "product_type_name",
+                      "expression": "`product_type_name`"
+                    },
+                    {
+                      "name": "monthly(date)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `date`)"
+                    },
+                    {
+                      "name": "sum(total_energy)",
+                      "expression": "SUM(`total_energy`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_energy)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "product_type_name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Total Electricity Consumption"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "0e97f856",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "is_business",
+                      "expression": "`is_business`"
+                    },
+                    {
+                      "name": "monthly(date)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `date`)"
+                    },
+                    {
+                      "name": "sum(total_energy)",
+                      "expression": "SUM(`total_energy`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_energy)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "is_business",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Total Electricity Consumption"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 23,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "e9add5e5",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "product_type_name",
+                      "expression": "`product_type_name`"
+                    },
+                    {
+                      "name": "monthly(date)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `date`)"
+                    },
+                    {
+                      "name": "sum(total_energy_production)",
+                      "expression": "SUM(`total_energy_production`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_energy_production)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "product_type_name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Total Electricity Production"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 3,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "0cf7ad09",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "is_business",
+                      "expression": "`is_business`"
+                    },
+                    {
+                      "name": "monthly(date)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `date`)"
+                    },
+                    {
+                      "name": "sum(total_energy_production)",
+                      "expression": "SUM(`total_energy_production`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_energy_production)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "is_business",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Total Electricity Production"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 23,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "168ce200",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "county_name",
+                      "expression": "`county_name`"
+                    },
+                    {
+                      "name": "monthly(date)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `date`)"
+                    },
+                    {
+                      "name": "sum(total_energy)",
+                      "expression": "SUM(`total_energy`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_energy)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "county_name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Total Electricity Consumption"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 31,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "a05021d3",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "county_name",
+                      "expression": "`county_name`"
+                    },
+                    {
+                      "name": "monthly(date)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `date`)"
+                    },
+                    {
+                      "name": "sum(total_energy_production)",
+                      "expression": "SUM(`total_energy_production`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_energy_production)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "county_name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Total Electricity Production"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 31,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "f875a208",
+            "multilineTextboxSpec": {
+              "lines": [
+                "## <span style=\"text-align:center;display:block\"><span style=\"font-size:18px\">Electricity Consumption and Production by Product Type</span></span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 6,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "6a45931b",
+            "multilineTextboxSpec": {
+              "lines": [
+                "## <span style=\"text-align:center;display:block\"><span style=\"font-size:18px\">Electricity Consumption and Production by Residential Type</span></span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 21,
+            "width": 6,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "04a462ab",
+            "multilineTextboxSpec": {
+              "lines": [
+                "## <span style=\"text-align:center;display:block\"><span style=\"font-size:18px\">Electricity Consumption and Production by County</span></span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 29,
+            "width": 6,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "5d7e42bf",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "a301f28c",
+                  "fields": [
+                    {
+                      "name": "is_consumption",
+                      "expression": "`is_consumption`"
+                    },
+                    {
+                      "name": "sum(target)",
+                      "expression": "SUM(`target`)"
+                    },
+                    {
+                      "name": "monthly(date)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `date`)"
+                    },
+                    {
+                      "name": "avg(target)",
+                      "expression": "AVG(`target`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "scatter",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "avg(target)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "is_consumption",
+                  "scale": {
+                    "type": "categorical",
+                    "mappings": [
+                      {
+                        "value": 0,
+                        "color": {
+                          "themeColorType": "visualizationColors",
+                          "position": 2
+                        }
+                      },
+                      {
+                        "value": 1,
+                        "color": {
+                          "themeColorType": "visualizationColors",
+                          "position": 1
+                        }
+                      }
+                    ]
+                  }
+                },
+                "size": {
+                  "fieldName": "sum(target)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Seasonal Prosumption Pattern"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "37c79a49",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "a301f28c",
+                  "fields": [
+                    {
+                      "name": "is_consumption",
+                      "expression": "`is_consumption`"
+                    },
+                    {
+                      "name": "time",
+                      "expression": "`time`"
+                    },
+                    {
+                      "name": "avg(target)",
+                      "expression": "AVG(`target`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "time",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "avg(target)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "is_consumption",
+                  "scale": {
+                    "type": "categorical",
+                    "mappings": [
+                      {
+                        "value": 0,
+                        "color": {
+                          "themeColorType": "visualizationColors",
+                          "position": 2
+                        }
+                      },
+                      {
+                        "value": 1,
+                        "color": {
+                          "themeColorType": "visualizationColors",
+                          "position": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Daily Prosumption Pattern"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 15,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "de992868",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "county_name",
+                      "expression": "`county_name`"
+                    },
+                    {
+                      "name": "product_type_name",
+                      "expression": "`product_type_name`"
+                    },
+                    {
+                      "name": "is_business",
+                      "expression": "`is_business`"
+                    },
+                    {
+                      "name": "sum(total_energy)",
+                      "expression": "SUM(`total_energy`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "sankey",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(total_energy)"
+                },
+                "stages": [
+                  {
+                    "fieldName": "county_name"
+                  },
+                  {
+                    "fieldName": "product_type_name"
+                  },
+                  {
+                    "fieldName": "is_business"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Presumer Behavior Category for Electricity Consumption"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 37,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "9583301c",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "county_name",
+                      "expression": "`county_name`"
+                    },
+                    {
+                      "name": "product_type_name",
+                      "expression": "`product_type_name`"
+                    },
+                    {
+                      "name": "is_business",
+                      "expression": "`is_business`"
+                    },
+                    {
+                      "name": "sum(total_energy_production)",
+                      "expression": "SUM(`total_energy_production`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "sankey",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(total_energy_production)"
+                },
+                "stages": [
+                  {
+                    "fieldName": "county_name"
+                  },
+                  {
+                    "fieldName": "product_type_name"
+                  },
+                  {
+                    "fieldName": "is_business",
+                    "displayName": "Is Business"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Presumer Behavior Category for Electricity Production"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 37,
+            "width": 3,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS"
+    },
+    {
+      "name": "979fae27",
+      "displayName": "Weather Condition Analysis",
+      "layout": [
+        {
+          "widget": {
+            "name": "dbd3d544",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "fd3b2ef6",
+                  "fields": [
+                    {
+                      "name": "avg(wh_temperature)",
+                      "expression": "AVG(`wh_temperature`)"
+                    },
+                    {
+                      "name": "latitude",
+                      "expression": "`latitude`"
+                    },
+                    {
+                      "name": "longitude",
+                      "expression": "`longitude`"
+                    },
+                    {
+                      "name": "avg(wh_direct_solar_radiation)",
+                      "expression": "AVG(`wh_direct_solar_radiation`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "symbol-map",
+              "encodings": {
+                "coordinates": {
+                  "latitude": {
+                    "fieldName": "latitude"
+                  },
+                  "longitude": {
+                    "fieldName": "longitude"
+                  }
+                },
+                "color": {
+                  "fieldName": "avg(wh_temperature)",
+                  "scale": {
+                    "type": "quantitative",
+                    "colorRamp": {
+                      "mode": "scheme",
+                      "scheme": "orangered"
+                    }
+                  }
+                },
+                "size": {
+                  "fieldName": "avg(wh_direct_solar_radiation)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Temperature vs radiation for each observation stations"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 6,
+            "height": 9
+          }
+        },
+        {
+          "widget": {
+            "name": "8aec4355",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "fd3b2ef6",
+                  "fields": [
+                    {
+                      "name": "county_name",
+                      "expression": "`county_name`"
+                    },
+                    {
+                      "name": "sum(wh_temperature)",
+                      "expression": "SUM(`wh_temperature`)"
+                    },
+                    {
+                      "name": "sum(wh_direct_solar_radiation)",
+                      "expression": "SUM(`wh_direct_solar_radiation`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "county_name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "primary": {
+                    "fields": [
+                      {
+                        "fieldName": "sum(wh_temperature)"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    }
+                  },
+                  "secondary": {
+                    "fields": [
+                      {
+                        "fieldName": "sum(wh_direct_solar_radiation)"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Temperature vs radiation by counties"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 18,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "4a8858e7",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"font-size:24px;font-family:Arial\">Solar Radiation and Temperature for Counties</span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "576c6932",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "median(avg_temp)",
+                      "expression": "MEDIAN(`avg_temp`)"
+                    },
+                    {
+                      "name": "latitude",
+                      "expression": "`latitude`"
+                    },
+                    {
+                      "name": "longitude",
+                      "expression": "`longitude`"
+                    },
+                    {
+                      "name": "sum(avg_radiation)",
+                      "expression": "SUM(`avg_radiation`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "symbol-map",
+              "encodings": {
+                "coordinates": {
+                  "latitude": {
+                    "fieldName": "latitude"
+                  },
+                  "longitude": {
+                    "fieldName": "longitude"
+                  }
+                },
+                "color": {
+                  "fieldName": "median(avg_temp)",
+                  "scale": {
+                    "type": "quantitative",
+                    "colorRamp": {
+                      "mode": "scheme",
+                      "scheme": "redblue"
+                    },
+                    "reverse": true
+                  }
+                },
+                "size": {
+                  "fieldName": "sum(avg_radiation)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Median temperature and Solar radiation"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 10,
+            "width": 3,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "3155c746",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c56b8f6e",
+                  "fields": [
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    },
+                    {
+                      "name": "latitude",
+                      "expression": "`latitude`"
+                    },
+                    {
+                      "name": "longitude",
+                      "expression": "`longitude`"
+                    },
+                    {
+                      "name": "median(total_energy)",
+                      "expression": "MEDIAN(`total_energy`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "symbol-map",
+              "encodings": {
+                "coordinates": {
+                  "latitude": {
+                    "fieldName": "latitude"
+                  },
+                  "longitude": {
+                    "fieldName": "longitude"
+                  }
+                },
+                "color": {
+                  "fieldName": "count(*)",
+                  "displayName": "Average Capacity Count",
+                  "scale": {
+                    "type": "quantitative",
+                    "colorRamp": {
+                      "mode": "scheme",
+                      "scheme": "blues"
+                    },
+                    "reverse": false
+                  }
+                },
+                "size": {
+                  "fieldName": "median(total_energy)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "mark": {
+                "opacity": 0.56
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Median Capacity and Consumption Points"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 10,
+            "width": 3,
+            "height": 8
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "canvasBackgroundColor": {
+        "light": "#1F272D",
+        "dark": "#1F272D"
+      },
+      "widgetBackgroundColor": {
+        "light": "#11171C",
+        "dark": "#11171C"
+      },
+      "widgetBorderColor": {
+        "light": "#000000"
+      },
+      "fontColor": {
+        "light": "#E8ECF0",
+        "dark": "#E8ECF0"
+      },
+      "selectionColor": {
+        "light": "#8ACAFF",
+        "dark": "#8ACAFF"
+      },
+      "visualizationColors": [
+        "#077A9D",
+        "#FFAB00",
+        "#00A972",
+        "#FF3621",
+        "#8BCAE7",
+        "#AB4057",
+        "#99DDB4",
+        "#FCA4A1",
+        "#919191",
+        "#BF7080"
+      ],
+      "widgetHeaderAlignment": "LEFT"
+    },
+    "applyModeEnabled": false
+  }
+}
