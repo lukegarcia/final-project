@@ -1,0 +1,1251 @@
+{
+  "datasets": [
+    {
+      "name": "00c6b5a4",
+      "displayName": "county_weather_energy_features_4hours_mv",
+      "queryLines": [
+        "SELECT distinct \n",
+        "*\n",
+        ",(case when is_business then 'Business' else 'Consumer' end) AS eic_type\n",
+        ",(case when is_consumption then 'Consumption' else 'Production' end) AS target_type\n",
+        ",(case when t_observ_4hour=0 then '00-04'\n",
+        "    when t_observ_4hour=1 then '04-08' \n",
+        "    when t_observ_4hour=2 then '08-12' \n",
+        "    when t_observ_4hour=3 then '12-16' \n",
+        "    when t_observ_4hour=4 then '16-20' \n",
+        "    when t_observ_4hour=5 then '20-24' end) AS time_of_day\n",
+        "FROM cscie103_catalog_final.gold.county_energy_weather_4hours_mv"
+      ]
+    },
+    {
+      "name": "3f65c552",
+      "displayName": "county_energy_prediction_sum",
+      "queryLines": [
+        "select * from cscie103_catalog_final.gold.stream_predictions_summary"
+      ]
+    },
+    {
+      "name": "3aabf3a7",
+      "displayName": "stream_predictions",
+      "queryLines": [
+        "SELECT * FROM cscie103_catalog_final.gold.stream_predictions_2"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "536755f3",
+      "displayName": "Prosumers Behavior Analysis",
+      "layout": [
+        {
+          "widget": {
+            "name": "0796b788",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "00c6b5a4",
+                  "fields": [
+                    {
+                      "name": "avg(eic_count)",
+                      "expression": "AVG(`eic_count`)"
+                    },
+                    {
+                      "name": "latitude",
+                      "expression": "`latitude`"
+                    },
+                    {
+                      "name": "longitude",
+                      "expression": "`longitude`"
+                    },
+                    {
+                      "name": "county_name",
+                      "expression": "`county_name`"
+                    },
+                    {
+                      "name": "median(installed_capacity)",
+                      "expression": "MEDIAN(`installed_capacity`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "symbol-map",
+              "encodings": {
+                "coordinates": {
+                  "latitude": {
+                    "fieldName": "latitude"
+                  },
+                  "longitude": {
+                    "fieldName": "longitude"
+                  }
+                },
+                "color": {
+                  "fieldName": "avg(eic_count)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "size": {
+                  "fieldName": "median(installed_capacity)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "extra": [
+                  {
+                    "fieldName": "county_name"
+                  }
+                ]
+              },
+              "mark": {
+                "colors": [
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 2
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 4
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 6
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 8
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 9
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Median Capacity and Consumption Points"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 1,
+            "width": 3,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "6842f579",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "00c6b5a4",
+                  "fields": [
+                    {
+                      "name": "median(wf_temperature)",
+                      "expression": "MEDIAN(`wf_temperature`)"
+                    },
+                    {
+                      "name": "latitude",
+                      "expression": "`latitude`"
+                    },
+                    {
+                      "name": "longitude",
+                      "expression": "`longitude`"
+                    },
+                    {
+                      "name": "county_name",
+                      "expression": "`county_name`"
+                    },
+                    {
+                      "name": "sum(wf_direct_solar_radiation)",
+                      "expression": "SUM(`wf_direct_solar_radiation`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "symbol-map",
+              "encodings": {
+                "coordinates": {
+                  "latitude": {
+                    "fieldName": "latitude"
+                  },
+                  "longitude": {
+                    "fieldName": "longitude"
+                  }
+                },
+                "color": {
+                  "fieldName": "median(wf_temperature)",
+                  "scale": {
+                    "type": "quantitative",
+                    "colorRamp": {
+                      "mode": "scheme",
+                      "scheme": "redyellowblue"
+                    },
+                    "reverse": true
+                  }
+                },
+                "size": {
+                  "fieldName": "sum(wf_direct_solar_radiation)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "extra": [
+                  {
+                    "fieldName": "county_name"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Median temperature and Solar radiation "
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 3,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "6d36022c",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "00c6b5a4",
+                  "fields": [
+                    {
+                      "name": "target_type",
+                      "expression": "`target_type`"
+                    },
+                    {
+                      "name": "variance(euros_per_mwh)",
+                      "expression": "VARIANCE(`euros_per_mwh`)"
+                    },
+                    {
+                      "name": "time_of_day",
+                      "expression": "`time_of_day`"
+                    },
+                    {
+                      "name": "avg(target)",
+                      "expression": "AVG(`target`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "time_of_day",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "avg(target)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "target_type",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "size": {
+                  "fieldName": "variance(euros_per_mwh)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "label": {
+                  "show": false
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 17,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "213bc416",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "00c6b5a4",
+                  "fields": [
+                    {
+                      "name": "variance(euros_per_mwh)",
+                      "expression": "VARIANCE(`euros_per_mwh`)"
+                    },
+                    {
+                      "name": "bin(wh_cloudcover_total, binWidth=10)",
+                      "expression": "BIN_FLOOR(`wh_cloudcover_total`, 10)"
+                    },
+                    {
+                      "name": "sum(target)",
+                      "expression": "SUM(`target`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "histogram",
+              "encodings": {
+                "x": {
+                  "fieldName": "bin(wh_cloudcover_total, binWidth=10)",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(target)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "variance(euros_per_mwh)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Weather Historical Cloud Cover Total"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 38,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "3c4a905d",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "00c6b5a4",
+                  "fields": [
+                    {
+                      "name": "county_name",
+                      "expression": "`county_name`"
+                    },
+                    {
+                      "name": "product_type",
+                      "expression": "`product_type`"
+                    },
+                    {
+                      "name": "eic_type",
+                      "expression": "`eic_type`"
+                    },
+                    {
+                      "name": "target_type",
+                      "expression": "`target_type`"
+                    },
+                    {
+                      "name": "time_of_day",
+                      "expression": "`time_of_day`"
+                    },
+                    {
+                      "name": "sum(target)",
+                      "expression": "SUM(`target`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "sankey",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(target)"
+                },
+                "stages": [
+                  {
+                    "fieldName": "county_name"
+                  },
+                  {
+                    "fieldName": "product_type"
+                  },
+                  {
+                    "fieldName": "eic_type"
+                  },
+                  {
+                    "fieldName": "target_type"
+                  },
+                  {
+                    "fieldName": "time_of_day"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 24,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "33274a20",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "00c6b5a4",
+                  "fields": [
+                    {
+                      "name": "stddev(euros_per_mwh)",
+                      "expression": "STDDEV(`euros_per_mwh`)"
+                    },
+                    {
+                      "name": "bin(wh_windspeed_10m, binWidth=1)",
+                      "expression": "BIN_FLOOR(`wh_windspeed_10m`, 1)"
+                    },
+                    {
+                      "name": "sum(target)",
+                      "expression": "SUM(`target`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "histogram",
+              "encodings": {
+                "x": {
+                  "fieldName": "bin(wh_windspeed_10m, binWidth=1)",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(target)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "stddev(euros_per_mwh)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Weather Historical Wind Direction Speeds 10M"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 44,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "b45625d2",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "00c6b5a4",
+                  "fields": [
+                    {
+                      "name": "variance(euros_per_mwh)",
+                      "expression": "VARIANCE(`euros_per_mwh`)"
+                    },
+                    {
+                      "name": "bin(wh_temperature, binWidth=5)",
+                      "expression": "BIN_FLOOR(`wh_temperature`, 5)"
+                    },
+                    {
+                      "name": "sum(target)",
+                      "expression": "SUM(`target`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`is_business` IN (`is_business`) OR TRUE"
+                    },
+                    {
+                      "expression": "`is_consumption` IN (`is_consumption`) OR TRUE"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "histogram",
+              "encodings": {
+                "x": {
+                  "fieldName": "bin(wh_temperature, binWidth=5)",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(target)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "variance(euros_per_mwh)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "label": {
+                  "show": false
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Weather Historical Temperature "
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 31,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "73f9ef39",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "00c6b5a4",
+                  "fields": [
+                    {
+                      "name": "target_type",
+                      "expression": "`target_type`"
+                    },
+                    {
+                      "name": "avg(wf_direct_solar_radiation)",
+                      "expression": "AVG(`wf_direct_solar_radiation`)"
+                    },
+                    {
+                      "name": "monthly(t_observ_date)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `t_observ_date`)"
+                    },
+                    {
+                      "name": "avg(target)",
+                      "expression": "AVG(`target`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "scatter",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(t_observ_date)",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "avg(target)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "target_type",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "size": {
+                  "fieldName": "avg(wf_direct_solar_radiation)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "5c43d4c5",
+            "multilineTextboxSpec": {
+              "lines": [
+                "# Weather Pattern and Prosumer Distribution"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "71d6dd5a",
+            "multilineTextboxSpec": {
+              "lines": [
+                "# Seasonal Prosumption Pattern"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 8,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "577d41bc",
+            "multilineTextboxSpec": {
+              "lines": [
+                "# Daily Prosumption Pattern"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 16,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "e08252fe",
+            "multilineTextboxSpec": {
+              "lines": [
+                "# Prosumer's Behavior Category Breakdown"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 23,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "b51700bc",
+            "multilineTextboxSpec": {
+              "lines": [
+                "# Weather Factor Analysis to Prosumer Behaviors"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 30,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "512486c1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "00c6b5a4",
+                  "fields": [
+                    {
+                      "name": "stddev(euros_per_mwh)",
+                      "expression": "STDDEV(`euros_per_mwh`)"
+                    },
+                    {
+                      "name": "bin(wf_10_metre_v_wind_component, binWidth=2)",
+                      "expression": "BIN_FLOOR(`wf_10_metre_v_wind_component`, 2)"
+                    },
+                    {
+                      "name": "sum(target)",
+                      "expression": "SUM(`target`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "histogram",
+              "encodings": {
+                "x": {
+                  "fieldName": "bin(wf_10_metre_v_wind_component, binWidth=2)",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(target)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "stddev(euros_per_mwh)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Weather Forecast Wind Direction Speeds 10M"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 50,
+            "width": 6,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS"
+    },
+    {
+      "name": "69bfd027",
+      "displayName": "Global Filters",
+      "layout": [
+        {
+          "widget": {
+            "name": "30b97540",
+            "queries": [
+              {
+                "name": "dashboards/01f0d3f03461120e9b210a6099d990a9/datasets/01f0d3f335871a1e9f455dc0ab9bb0b6_product_type",
+                "query": {
+                  "datasetName": "00c6b5a4",
+                  "fields": [
+                    {
+                      "name": "product_type",
+                      "expression": "`product_type`"
+                    },
+                    {
+                      "name": "product_type_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "product_type",
+                    "queryName": "dashboards/01f0d3f03461120e9b210a6099d990a9/datasets/01f0d3f335871a1e9f455dc0ab9bb0b6_product_type"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "f0afe4dd",
+            "queries": [
+              {
+                "name": "dashboards/01f0d3f03461120e9b210a6099d990a9/datasets/01f0d3f335871a1e9f455dc0ab9bb0b6_is_business",
+                "query": {
+                  "datasetName": "00c6b5a4",
+                  "fields": [
+                    {
+                      "name": "is_business",
+                      "expression": "`is_business`"
+                    },
+                    {
+                      "name": "is_business_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "is_business",
+                    "queryName": "dashboards/01f0d3f03461120e9b210a6099d990a9/datasets/01f0d3f335871a1e9f455dc0ab9bb0b6_is_business"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "4ea16355",
+            "queries": [
+              {
+                "name": "dashboards/01f0d3f03461120e9b210a6099d990a9/datasets/01f0d3f335871a1e9f455dc0ab9bb0b6_is_consumption",
+                "query": {
+                  "datasetName": "00c6b5a4",
+                  "fields": [
+                    {
+                      "name": "is_consumption",
+                      "expression": "`is_consumption`"
+                    },
+                    {
+                      "name": "is_consumption_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "is_consumption",
+                    "queryName": "dashboards/01f0d3f03461120e9b210a6099d990a9/datasets/01f0d3f335871a1e9f455dc0ab9bb0b6_is_consumption"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "4c9ffe7d",
+            "queries": [
+              {
+                "name": "dashboards/01f0d3f03461120e9b210a6099d990a9/datasets/01f0d3f335871a1e9f455dc0ab9bb0b6_t_observ_4hour",
+                "query": {
+                  "datasetName": "00c6b5a4",
+                  "fields": [
+                    {
+                      "name": "min(t_observ_4hour)",
+                      "expression": "MIN(`t_observ_4hour`)"
+                    },
+                    {
+                      "name": "max(t_observ_4hour)",
+                      "expression": "MAX(`t_observ_4hour`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "range-slider",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "t_observ_4hour",
+                    "queryName": "dashboards/01f0d3f03461120e9b210a6099d990a9/datasets/01f0d3f335871a1e9f455dc0ab9bb0b6_t_observ_4hour"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 8,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "e6347584",
+            "queries": [
+              {
+                "name": "dashboards/01f0d3f03461120e9b210a6099d990a9/datasets/01f0d3f335871a1e9f455dc0ab9bb0b6_data_block_id",
+                "query": {
+                  "datasetName": "00c6b5a4",
+                  "fields": [
+                    {
+                      "name": "min(data_block_id)",
+                      "expression": "MIN(`data_block_id`)"
+                    },
+                    {
+                      "name": "max(data_block_id)",
+                      "expression": "MAX(`data_block_id`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "range-slider",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "data_block_id",
+                    "queryName": "dashboards/01f0d3f03461120e9b210a6099d990a9/datasets/01f0d3f335871a1e9f455dc0ab9bb0b6_data_block_id"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 10,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "f9c6338d",
+            "queries": [
+              {
+                "name": "dashboards/01f0d3f03461120e9b210a6099d990a9/datasets/01f0d3f335871a1e9f455dc0ab9bb0b6_county_name",
+                "query": {
+                  "datasetName": "00c6b5a4",
+                  "fields": [
+                    {
+                      "name": "county_name",
+                      "expression": "`county_name`"
+                    },
+                    {
+                      "name": "county_name_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "county_name",
+                    "queryName": "dashboards/01f0d3f03461120e9b210a6099d990a9/datasets/01f0d3f335871a1e9f455dc0ab9bb0b6_county_name"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS"
+    },
+    {
+      "name": "e09bd087",
+      "displayName": "Prosumer Model Predictions",
+      "layout": [
+        {
+          "widget": {
+            "name": "acce3446",
+            "multilineTextboxSpec": {
+              "lines": [
+                "# Prosumer's Predictions - County IDA-VIRUMAA"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "afaca6f3",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "3f65c552",
+                  "fields": [
+                    {
+                      "name": "target_type",
+                      "expression": "`target_type`"
+                    },
+                    {
+                      "name": "latitude",
+                      "expression": "`latitude`"
+                    },
+                    {
+                      "name": "longitude",
+                      "expression": "`longitude`"
+                    },
+                    {
+                      "name": "county_name",
+                      "expression": "`county_name`"
+                    },
+                    {
+                      "name": "qt",
+                      "expression": "`qt`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "symbol-map",
+              "encodings": {
+                "coordinates": {
+                  "latitude": {
+                    "fieldName": "latitude"
+                  },
+                  "longitude": {
+                    "fieldName": "longitude"
+                  }
+                },
+                "color": {
+                  "fieldName": "target_type",
+                  "scale": {
+                    "type": "categorical",
+                    "mappings": [
+                      {
+                        "value": "Consumption",
+                        "color": {
+                          "themeColorType": "visualizationColors",
+                          "position": 4
+                        }
+                      },
+                      {
+                        "value": "Production",
+                        "color": {
+                          "themeColorType": "visualizationColors",
+                          "position": 3
+                        }
+                      }
+                    ]
+                  }
+                },
+                "size": {
+                  "fieldName": "qt",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "extra": [
+                  {
+                    "fieldName": "county_name"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 2,
+            "height": 9
+          }
+        },
+        {
+          "widget": {
+            "name": "6601ecde",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "3aabf3a7",
+                  "fields": [
+                    {
+                      "name": "data_block_id",
+                      "expression": "`data_block_id`"
+                    },
+                    {
+                      "name": "avg(prediction)",
+                      "expression": "AVG(`prediction`)"
+                    },
+                    {
+                      "name": "avg(target)",
+                      "expression": "AVG(`target`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "data_block_id",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "fields": [
+                    {
+                      "fieldName": "avg(prediction)"
+                    },
+                    {
+                      "fieldName": "avg(target)"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 1,
+            "width": 4,
+            "height": 9
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
