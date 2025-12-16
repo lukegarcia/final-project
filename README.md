@@ -25,8 +25,8 @@ Our objectives were to:
 | **Luke** | Data Engineer 1 |
 | **Kenichi** | Data Engineer 2 |
 | **Selin** | Data Scientist 1 |
-| **Liwei** | Data Scientist 2 & BI Analyst 1 |
-| **Peiran** | BI Analyst 2 |
+| **Liwei** | Data Scientist 2 & BI Analyst 2 |
+| **Peiran** | BI Analyst 1 |
 | **Abby** | Data Architect 1 & Group Leader |
 | **Chijioke** | Data Architect 2 |
 
