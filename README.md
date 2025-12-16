@@ -211,7 +211,7 @@ These utilities speed up debugging, validation, and schema exploration across th
 ## 🤖 Data Science  
 *(To be completed by Selin & Liwei)*
 
-### **Data Scientist 1 – Selin **
+### ** Data Scientist 1 – Selin **
 Run 06_DataScience.ipynb
 
 #### 🔹 1. Exploratory Data Analysis (EDA)  
@@ -237,6 +237,29 @@ Has_business, n_product_types,total_energy_production.
 - Error distribution 
 - Feature importance values from the model
 
+### ** MlOps 2 Liwei **
+
+#### 🔹 ML Data pipelinea 
+* 01A_bronze_enhancer.sql: stream table of data sources of client, weather, pricing, and train data.
+* 02A_silver_enhancer.sql: produce cleansed, enriched data with GIS transformation for ML 
+* 03A_gold_enhancer.sql: construct weather, client attribute, pricing and energy production and consumption data aggregated features.  
+
+### ** Data Scientist 2 Liwei **
+
+#### 🔹 ML Model pipelinea 
+* 06a_prosumer_feature_selection.ipynb
+- Focused on exploring and  selecting features at County level base on Selin's finding.
+
+* 7_prosumer_model_training.ipynb
+- Loop through all county (free version can be limiting)
+- Model training with Linear Regression managed by Spark ML Pipeline, 
+- Crossvalidation using RMSE.
+
+* 8_prosumer_model_application.ipynb
+- Simulate the model application by Streaming test data repartition to 500
+- Load the Model directory
+- Using the model base on its Geo location (county) and output the prediction table and prediction summary stream tables.
+   
 
 Expected content for this section:
 
