@@ -209,7 +209,6 @@ These utilities speed up debugging, validation, and schema exploration across th
 ---
 
 ## 🤖 Data Science  
-*(To be completed by Selin & Liwei)*
 
 ### ** Data Scientist 1 – Selin **
 Run 06_DataScience.ipynb
@@ -237,14 +236,14 @@ Has_business, n_product_types,total_energy_production.
 - Error distribution 
 - Feature importance values from the model
 
-### ** MlOps 2 Liwei **
+### ** MlOps - Liwei **
 
 #### 🔹 ML Data pipelinea 
 * 01A_bronze_enhancer.sql: stream table of data sources of client, weather, pricing, and train data.
 * 02A_silver_enhancer.sql: produce cleansed, enriched data with GIS transformation for ML 
 * 03A_gold_enhancer.sql: construct weather, client attribute, pricing and energy production and consumption data aggregated features.  
 
-### ** Data Scientist 2 Liwei **
+### ** Data Scientist 2 - Liwei **
 
 #### 🔹 ML Model pipelinea 
 * 06a_prosumer_feature_selection.ipynb
@@ -274,6 +273,11 @@ Expected content for this section:
 
 ## 📊 Business Intelligence  
 *(To be completed by Liwei & Peiran)*
+
+### ** BI Analyst 2 - Liwei **
+* Prosumer model application dashboard with sample county
+- Target
+- Prediction
 
 Expected BI deliverables:
 
