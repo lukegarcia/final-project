@@ -264,7 +264,42 @@ Has_business, n_product_types,total_energy_production.
 ---
 
 ## 📊 Business Intelligence  
-*(To be completed by Liwei & Peiran)*
+### **BI Analyst 1 - Peiran**
+- Created sql queries to pull data from gold layer and processed with additional information for dashboard
+- created the business insights to demonstate:
+  1. key drivers of energy demand and supply
+  2. energy imbalances and actionable root causes
+  3. Geographic focus for targeted optimization
+
+The dashboard has 3 tabs:
+- tab Overview: electricity production and consumption by key determinats
+  this tab shows
+  1. the total electricity consumption by counties and their percentages;
+  2. total electricity over time and how it compares with the average temperature over time.
+  3. total electricity production by counties and percentages
+  4. total electricity production over time and how it compares with the average radiation over time
+  5. energy imbalance over time (total consumption - total production)
+  6. by what solar product and residential type that has the most imbalance
+  7. electricity imbalance by counties
+- tab Production and Consumption details
+  1. total production and consumption by month
+  2. seasonal prosumption pattern
+  3. daily prosumption pattern
+  4. prosumption by residential type
+  5. prosumption by counties
+  6. prosumer behaviors
+- tab weather condition analysis
+  1. temperature vs radiation (median, mean)
+  2. temperature vs radiation by counties
+ 
+Dashboard data refresh: data updates are automatic. Everything refreshes every day at 12:30 AM, so users are always working with current data without needing to do anything manually.
+
+Data governance: We’ve set up role-based access so off-shore county users only see data for County 1 and 10, while mainland users can see the rest. This keeps the data secure and relevant for each group.
+   is_member('Off_shore_county') 
+      AND county IN (1, 10)          -- offshore counties
+   is_member('Mainland_county')
+      AND county NOT IN (1, 10)      -- all other counties
+
 
 ### **BI Analyst 2 - Liwei**
 - Prosumer model application dashboard with sample county
