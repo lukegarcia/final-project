@@ -1,0 +1,56 @@
+Table,Column Name,Data Type,PK/FK,Index,Cardinality,Scale/Notes
+train,county,INT,FK,Yes,Medium-High,
+,is_business,INT,,,N/A,
+,product_type,,,,N/A,
+,target,DOUBLE,,,N/A,Hourly consumption/production
+,is_consumption,INT,,,N/A,boolean
+,is_consumption,TIMESTAMP,,,N/A,Hour start in EET/EEST. Partition large table by date or month.
+,data_block_id,INT,FK,Yes,High,Aligns available forecast data
+,row_id,INT,PK,Yes (Unique),Unique,Provided unqieu row identifer
+,prediction_unit_id,INT,,,Medium-High,"A unique identifier for the county, is_business, and product_type combination"
+gas_prices,origin_date,DATE,PK,Yes,High,"With data_block_id, is how rows are uniquely identified; Date when prices became available"
+,forecast_date,DATE,,Yes,N/A,The date prices apply to
+,[lowest/highest]_price_per_mwh,DOUBLE,,,N/A,
+,data_block_id,INT,PK/FK,Yes,High,"With origin_date, is how rows are uniquely identified; Groups a forecast run"
+electricity_prices,origin_date,TIMESTAMP,PK,Yes,High,"With data_block_id, is how rows are uniquely identified; generation timestamp for prices"
+,forecast_date,TIMESTAMP,,Yes,Very high,start of the hour price is valid for
+,euros_per_mwh,DOUBLE,,,N/A,
+,data_block_id,INT,PK/FK,Yes,High,"With origin_date, is how rows are uniquely identified; generation timestamp for prices"
+weather_station_to_county_mapping,county_name,STRING,,,N/A,
+,longittude,DOUBLE,PK,,Many,"With latitude, is how rows are uniquely identified"
+,latitude,DOUBLE,PK,,Many,"With longitude, is how rows are uniquely identified"
+,county,INT,FK,,~15,
+client,product_type,INT,FK,Yes,Low,
+,county,INT,FK,Yes,Medium,
+,eic_count,INT,,,N/A,aggregate counts
+,installed_capacity,DOUBLE,,,N/A,
+,is_business,INT,,Yes,Low,
+,date,DATE,PK,Yes,High,
+,data_block_id,INT,PK,Yes,High,
+forecast_weather,[latitude/longitude] ,DOUBLE,PK,Yes,Many,"With origin_datetime, is how rows are uniquely identified; joins to mapping table"
+,origin_datetime ,TIMESTAMP,PK,Yes,Many,"With latitude/longitude, is how rows are uniquely identified; generation timestamp of forecast run"
+,hours_ahead ,INT,,,N/A,
+,temperature ,DOUBLE,,,N/A,estiamted for end of period
+,dewpoint ,DOUBLE,,,N/A,
+,cloudcover_[low/mid/high/total] ,DOUBLE,,,N/A,
+,10_metre_[u/v]_wind_component ,DOUBLE,,,N/A,
+,data_block_id,INT,FK,Yes,High,ties forecasts to a run
+,forecast_datetime ,TIMESTAMP,PK,Yes,Many,start of the hour predicted: origin_datetime + hours ahead
+,direct_solar_radiation ,DOUBLE,,,N/A,
+,surface_solar_radiation_downwards ,DOUBLE,,,N/A,
+,snowfall ,DOUBLE,,,N/A,
+,total_precipitation ,DOUBLE,,,N/A,
+historical_weather,datetime ,TIMESTAMP,PK,Yes,Very high,"With latitude/longitude, is how rows are uniquely identified; measured hour start"
+,temperature ,DOUBLE,,,N/A,
+,dewpoint ,DOUBLE,,,N/A,
+,rain ,DOUBLE,,,N/A,mm
+,snowfall ,DOUBLE,,,N/A,cm
+,surface_pressure ,DOUBLE,,,N/A,
+,cloudcover_[low/mid/high/total] ,INT,,,N/A,
+,windspeed_10m ,DOUBLE,,,N/A,
+,winddirection_10m ,INT,,,N/A,
+,shortwave_radiation ,DOUBLE,,,N/A,
+,direct_solar_radiation,DOUBLE,,,N/A,
+,diffuse_radiation ,DOUBLE,,,N/A,
+,[latitude/longitude] ,DOUBLE,PK,Yes,Many,"With datetime, is how rows are uniquely identified"
+,data_block_id,INT,FK,Yes,High,
