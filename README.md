@@ -238,7 +238,7 @@ Has_business, n_product_types,total_energy_production.
 
 ---
 
-### **MlOps - Liwei**
+### **MLOps - Liwei**
 
 #### 🔹 ML Data pipelinea 
 * 01A_bronze_enhancer.sql: stream table of data sources of client, weather, pricing, and train data.
